@@ -16,4 +16,23 @@ package frc.robot;
  * constants are needed, to reduce verbosity.
  */
 public final class Constants {
+
+    enum DriveTrain {
+
+        LEFT_MOTOR_1 (7), LEFT_MOTOR_2 (8), LEFT_MOTOR_3 (9),
+        RIGHT_MOTOR_1 (0), RIGHT_MOTOR_2 (1), RIGHT_MOTOR_3 (2);
+        
+        private final int portValue;
+
+        private DriveTrain(int portValue) {
+            this.portValue = portValue;
+        }
+
+        public int getPortValue() {
+            return portValue;
+        }
+
+    }
+
+    
 }
