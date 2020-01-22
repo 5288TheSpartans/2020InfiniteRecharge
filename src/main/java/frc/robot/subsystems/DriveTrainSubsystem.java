@@ -29,7 +29,7 @@ public class DriveTrainSubsystem implements Subsystem {
     private VictorSP rightMotor2 = new VictorSP(driveTrain.RIGHT_MOTOR_2.getValue());
 
     // Create Gyro
-    private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
+//    private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
     // Create Encoders
     private Encoder leftEncoder = new Encoder(driveTrain.LEFT_ENCODER_1.getValue(),driveTrain.LEFT_ENCODER_2.getValue(), false,
@@ -60,7 +60,7 @@ public class DriveTrainSubsystem implements Subsystem {
         leftEncoder.setSamplesToAverage(1);
         rightEncoder.setSamplesToAverage(1);
 
-        gyro.calibrate();
+//        gyro.calibrate();
     }
 
     /**
@@ -104,13 +104,13 @@ public class DriveTrainSubsystem implements Subsystem {
         return rightEncoder.getDistance();
     }
 
-    public double getGyroAngle() {
-        return gyro.getAngle();
-    }
+//    public double getGyroAngle() {
+//        return gyro.getAngle();
+//    }
 
-    public void resetGyro() {
-        gyro.reset();
-    }
+//    public void resetGyro() {
+//        gyro.reset();
+//    }
 
     public void resetEncoders() {
         leftEncoder.reset();
