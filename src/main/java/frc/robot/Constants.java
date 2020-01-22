@@ -27,6 +27,7 @@ public final class Constants {
         LEFT_ENCODER_1(0), LEFT_ENCODER_2(1),
         RIGHT_ENCODER_1(2), RIGHT_ENCODER_2(3);
 
+
         private final int value;
 
         driveTrain(int value) {
@@ -37,4 +38,25 @@ public final class Constants {
             return value;
         }
     }
+    // Drive Straight PID Values
+    public static final double DRIVE_STRAIGHT_P = 0;
+    public static final double DRIVE_STRAIGHT_I = 0;
+    public static final double DRIVE_STRAIGHT_D = 0;
+
+    public static final double DRIVE_STRAIGHT_TARGET = 0;
+
+    // Xbox Controller Values
+
+    public static final int XBOX_CONTROLLER_PORT = 0;
+    public static final double JOYSTICK_DEADZONE = 0.05;
+    public static final double TRIGGER_DEADZONE = 0.05;
+
+
+    // Pneumatics Values
+
+    public static final int PCMID = 0;
+    public static final int intakeSolenoidChannel = 7;
+
+    public static final int PNEUMATICS_MOTOR_PORT = 4;
+
 }

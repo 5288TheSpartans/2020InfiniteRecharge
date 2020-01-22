@@ -8,8 +8,8 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants.driveTrain;
-//import frc.robot.Robot;
-//import frc.robot.commands.ArcadeDriveCommand;
+import frc.robot.RobotContainer;
+import frc.robot.commands.ArcadeDriveCommand;
 
 public class DriveTrainSubsystem implements Subsystem {
 
@@ -23,7 +23,7 @@ public class DriveTrainSubsystem implements Subsystem {
 
     // Create Motors
     private VictorSP leftMotor1 = new VictorSP(driveTrain.LEFT_MOTOR_1.getValue());
-    private VictorSP leftMotor2 = new VictorSP(driveTrain.LEFT_MOTOR_1.getValue());
+    private VictorSP leftMotor2 = new VictorSP(driveTrain.LEFT_MOTOR_2.getValue());
 
     private VictorSP rightMotor1 = new VictorSP(driveTrain.RIGHT_MOTOR_1.getValue());
     private VictorSP rightMotor2 = new VictorSP(driveTrain.RIGHT_MOTOR_2.getValue());
@@ -50,7 +50,7 @@ public class DriveTrainSubsystem implements Subsystem {
      */
     private DriveTrainSubsystem() {
 
-//      setDefaultCommand(ArcadeDriveCommand);
+        setDefaultCommand(new ArcadeDriveCommand());
         leftEncoder.setDistancePerPulse(wheelCircumference / numberOfTicks);
         rightEncoder.setDistancePerPulse(wheelCircumference / numberOfTicks);
         leftEncoder.setMaxPeriod(5);
@@ -72,7 +72,7 @@ public class DriveTrainSubsystem implements Subsystem {
     }
 
     public void setRightPower(double power){
-        leftPower = power;
+        rightPower = power;
     }
 
     /**
@@ -115,6 +115,13 @@ public class DriveTrainSubsystem implements Subsystem {
     public void resetEncoders() {
         leftEncoder.reset();
         rightEncoder.reset();
+    }
+
+    public double parabolicDrive() {
+        if (RobotContainer.getInstance().xboxGetLeftStickY() > 0)
+            return Math.pow(RobotContainer.getInstance().xboxGetLeftStickY(), 2);
+        else
+            return -Math.pow(RobotContainer.getInstance().xboxGetLeftStickY(), 2);
     }
 
     /**
