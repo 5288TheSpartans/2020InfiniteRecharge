@@ -43,6 +43,7 @@ public class RobotContainer {
 
 
   private void configureButtonBindings() {
+    defineButtons();
 
   }
   private double xboxGetLeftStickX() {
