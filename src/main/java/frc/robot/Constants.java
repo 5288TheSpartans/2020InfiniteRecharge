@@ -17,27 +17,25 @@ package frc.robot;
  */
 public final class Constants {
 
-    public enum driveTrain {
 
-        // (VictorSP) Motor Port Values
-        LEFT_MOTOR_1 (7), LEFT_MOTOR_2 (8),
-        RIGHT_MOTOR_1 (0), RIGHT_MOTOR_2 (1),
+    // Wheel Circumference and Encoder Ticks
+    public static final int numberOfTicks = 2048;
+    public static final double wheelCircumference = (Math.PI * 6);
 
-        // Encoder Port Values
-        LEFT_ENCODER_1(0), LEFT_ENCODER_2(1),
-        RIGHT_ENCODER_1(2), RIGHT_ENCODER_2(3);
+    // (VictorSP) Motor Port Values
+    public static final int LEFT_MOTOR_1 = 7;
+    public static final int LEFT_MOTOR_2 = 8;
 
+    public static final int RIGHT_MOTOR_1 = 0;
+    public static final int RIGHT_MOTOR_2 = 1;
 
-        private final int value;
+    // Encoder Port Values
+    public static final int LEFT_ENCODER_1 = 0;
+    public static final int LEFT_ENCODER_2 = 1;
 
-        driveTrain(int value) {
-            this.value = value;
-        }
+    public static final int RIGHT_ENCODER_1 = 2;
+    public static final int RIGHT_ENCODER_2 = 3;
 
-        public int getValue() {
-            return value;
-        }
-    }
     // Drive Straight PID Values
     public static final double DRIVE_STRAIGHT_P = 0;
     public static final double DRIVE_STRAIGHT_I = 0;
@@ -51,9 +49,7 @@ public final class Constants {
     public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double TRIGGER_DEADZONE = 0.05;
 
-
     // Pneumatics Values
-
     public static final int PCMID = 0;
     public static final int intakeSolenoidChannel = 7;
 

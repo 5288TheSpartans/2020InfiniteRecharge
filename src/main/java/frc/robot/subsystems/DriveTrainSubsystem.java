@@ -1,15 +1,18 @@
 package frc.robot.subsystems;
 
 
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import frc.robot.Constants.driveTrain;
+import frc.robot.Constants;
 import frc.robot.RobotContainer;
+import frc.robot.Robot;
 import frc.robot.commands.ArcadeDriveCommand;
+
 
 public class DriveTrainSubsystem implements Subsystem {
 
@@ -18,23 +21,21 @@ public class DriveTrainSubsystem implements Subsystem {
 
     //Initialize useful constants and variables
     private double leftPower, rightPower;
-    private final int numberOfTicks = 2048;
-    private final double wheelCircumference = (Math.PI * 6);
 
     // Create Motors
-    private VictorSP leftMotor1 = new VictorSP(driveTrain.LEFT_MOTOR_1.getValue());
-    private VictorSP leftMotor2 = new VictorSP(driveTrain.LEFT_MOTOR_2.getValue());
+    private VictorSP leftMotor1 = new VictorSP(Constants.LEFT_MOTOR_1);
+    private VictorSP leftMotor2 = new VictorSP(Constants.LEFT_MOTOR_2);
 
-    private VictorSP rightMotor1 = new VictorSP(driveTrain.RIGHT_MOTOR_1.getValue());
-    private VictorSP rightMotor2 = new VictorSP(driveTrain.RIGHT_MOTOR_2.getValue());
+    private VictorSP rightMotor1 = new VictorSP(Constants.RIGHT_MOTOR_1);
+    private VictorSP rightMotor2 = new VictorSP(Constants.RIGHT_MOTOR_2);
 
     // Create Gyro
 //    private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
 
     // Create Encoders
-    private Encoder leftEncoder = new Encoder(driveTrain.LEFT_ENCODER_1.getValue(),driveTrain.LEFT_ENCODER_2.getValue(), false,
+    private Encoder leftEncoder = new Encoder(Constants.LEFT_ENCODER_1,Constants.LEFT_ENCODER_2, false,
             EncodingType.k4X);
-    private Encoder rightEncoder = new Encoder(driveTrain.RIGHT_ENCODER_1.getValue(),driveTrain.RIGHT_ENCODER_2.getValue(), true,
+    private Encoder rightEncoder = new Encoder(Constants.RIGHT_ENCODER_1,Constants.RIGHT_ENCODER_2, true,
             EncodingType.k4X);
 
     /**
@@ -50,17 +51,21 @@ public class DriveTrainSubsystem implements Subsystem {
      */
     private DriveTrainSubsystem() {
 
-        setDefaultCommand(new ArcadeDriveCommand());
-        leftEncoder.setDistancePerPulse(wheelCircumference / numberOfTicks);
-        rightEncoder.setDistancePerPulse(wheelCircumference / numberOfTicks);
+        invertMotors();
+        leftEncoder.setDistancePerPulse(Constants.wheelCircumference / Constants.numberOfTicks);
+        rightEncoder.setDistancePerPulse(Constants.wheelCircumference / Constants.numberOfTicks);
         leftEncoder.setMaxPeriod(5);
         rightEncoder.setMaxPeriod(5);
         leftEncoder.setMinRate(0);
         rightEncoder.setMinRate(0);
         leftEncoder.setSamplesToAverage(1);
         rightEncoder.setSamplesToAverage(1);
-
 //        gyro.calibrate();
+    }
+
+    @Override
+    public void periodic() {
+        updateMotorOutputs();
     }
 
     /**
@@ -75,12 +80,13 @@ public class DriveTrainSubsystem implements Subsystem {
         rightPower = power;
     }
 
+    public void invertMotors() { leftMotor1.setInverted(true); leftMotor2.setInverted(true); }
     /**
      * Called by the CommandScheduler to update each motors power value periodically.
      */
     public void updateMotorOutputs(){
-        leftMotor1.set(-leftPower);
-        leftMotor2.set(-leftPower);
+        leftMotor1.set(leftPower);
+        leftMotor2.set(leftPower);
 
         rightMotor1.set(rightPower);
         rightMotor2.set(rightPower);
@@ -117,13 +123,6 @@ public class DriveTrainSubsystem implements Subsystem {
         rightEncoder.reset();
     }
 
-    public double parabolicDrive() {
-        if (RobotContainer.getInstance().xboxGetLeftStickY() > 0)
-            return Math.pow(RobotContainer.getInstance().xboxGetLeftStickY(), 2);
-        else
-            return -Math.pow(RobotContainer.getInstance().xboxGetLeftStickY(), 2);
-    }
-
     /**
      * Returns the Singleton instance of this DriveTrainSubsystem. This static method
      * should be used -- {@code DriveTrainSubsystem.getInstance();} -- by external
@@ -132,6 +131,5 @@ public class DriveTrainSubsystem implements Subsystem {
     public static DriveTrainSubsystem getInstance() {
         return INSTANCE;
     }
-
 }
 
