@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.CommandBase;
+//import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Robot;
 import frc.robot.RobotContainer;
 import frc.robot.subsystems.DriveTrainSubsystem;
@@ -10,16 +10,15 @@ import frc.robot.Constants;
 
 import java.util.Set;
 
-public class ArcadeDriveCommand implements Command {
+public class ArcadeDriveCommand extends CommandBase {
     private final DriveTrainSubsystem m_driveTrain;
-    private final Set<Subsystem> subsystems;
     private PIDController PID;
 
     private double leftJoyY, rightJoyX, error, gain;
 
     public ArcadeDriveCommand(DriveTrainSubsystem driveTrainSubsystem, double currentLeftJoyY, double currentRightJoyX) {
         this.m_driveTrain = driveTrainSubsystem;
-        this.subsystems = Set.of(driveTrainSubsystem);
+        addRequirements(m_driveTrain);
         leftJoyY = currentLeftJoyY;
         rightJoyX = currentRightJoyX;
     }
@@ -81,34 +80,12 @@ public class ArcadeDriveCommand implements Command {
 
     }
 
-    /**
-     * <p>
-     * Returns whether this command has finished. Once a command finishes -- indicated by
-     * this method returning true -- the scheduler will call its {@link #end(boolean)} method.
-     * </p><p>
-     * Returning false will result in the command never ending automatically. It may still be
-     * cancelled manually or interrupted by another command. Hard coding this command to always
-     * return true will result in the command executing once and finishing immediately. It is
-     * recommended to use * {@link edu.wpi.first.wpilibj2.command.InstantCommand InstantCommand}
-     * for such an operation.
-     * </p>
-     *
-     * @return whether this command has finished.
-     */
     @Override
     public boolean isFinished() {
         // TODO: Make this return true when this Command no longer needs to run execute()
         return false;
     }
 
-    /**
-     * The action to take when the command ends. Called when either the command
-     * finishes normally -- that is it is called when {@link #isFinished()} returns
-     * true -- or when  it is interrupted/canceled. This is where you may want to
-     * wrap up loose ends, like shutting off a motor that was being used in the command.
-     *
-     * @param interrupted whether the command was interrupted/canceled
-     */
     @Override
     public void end(boolean interrupted) {
 
@@ -120,21 +97,6 @@ public class ArcadeDriveCommand implements Command {
         else
             return -Math.pow(leftJoyY, 2);
     }
-    /**
-     * <p>
-     * Specifies the set of subsystems used by this command.  Two commands cannot use the same
-     * subsystem at the same time.  If the command is scheduled as interruptible and another
-     * command is scheduled that shares a requirement, the command will be interrupted.  Else,
-     * the command will not be scheduled. If no subsystems are required, return an empty set.
-     * </p><p>
-     * Note: it is recommended that user implementations contain the requirements as a field,
-     * and return that field here, rather than allocating a new set every time this is called.
-     * </p>
-     *
-     * @return the set of subsystems that are required
-     */
-    @Override
-    public Set<Subsystem> getRequirements() {
-        return this.subsystems;
-    }
+
 }
+

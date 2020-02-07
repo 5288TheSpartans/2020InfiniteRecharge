@@ -2,7 +2,7 @@ package frc.robot.subsystems;
 
 
 import edu.wpi.first.wpilibj2.command.Command;
-import edu.wpi.first.wpilibj2.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
@@ -14,7 +14,7 @@ import frc.robot.Robot;
 import frc.robot.commands.ArcadeDriveCommand;
 
 
-public class DriveTrainSubsystem implements Subsystem {
+public class DriveTrainSubsystem extends SubsystemBase {
 
 // Any variables/fields used in the constructor must appear before the "INSTANCE" variable
 // so that they are initialized before the constructor is called.
@@ -38,18 +38,8 @@ public class DriveTrainSubsystem implements Subsystem {
     private Encoder rightEncoder = new Encoder(Constants.RIGHT_ENCODER_1,Constants.RIGHT_ENCODER_2, true,
             EncodingType.k4X);
 
-    /**
-     * The Singleton instance of this DriveTrainSubsystem. External classes should
-     * use the {@link #getInstance()} method to get the instance.
-     */
-    private final static DriveTrainSubsystem INSTANCE = new DriveTrainSubsystem();
-
-    /**
-     * Creates a new instance of this DriveTrainSubsystem.
-     * This constructor is private since this class is a Singleton. External classes
-     * should use the {@link #getInstance()} method to get the instance.
-     */
-    private DriveTrainSubsystem() {
+    public DriveTrainSubsystem() {
+        System.out.println("DriveTrainSubsystem CONSTRUCTOR initialized!");
 
         invertMotors();
         leftEncoder.setDistancePerPulse(Constants.wheelCircumference / Constants.numberOfTicks);
@@ -121,15 +111,6 @@ public class DriveTrainSubsystem implements Subsystem {
     public void resetEncoders() {
         leftEncoder.reset();
         rightEncoder.reset();
-    }
-
-    /**
-     * Returns the Singleton instance of this DriveTrainSubsystem. This static method
-     * should be used -- {@code DriveTrainSubsystem.getInstance();} -- by external
-     * classes, rather than the constructor to get the instance of this class.
-     */
-    public static DriveTrainSubsystem getInstance() {
-        return INSTANCE;
     }
 }
 
