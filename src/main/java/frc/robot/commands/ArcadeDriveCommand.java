@@ -2,101 +2,122 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-//import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Robot;
-import frc.robot.RobotContainer;
+import java.util.function.DoubleSupplier;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.Constants;
-
-import java.util.Set;
 
 public class ArcadeDriveCommand extends CommandBase {
     private final DriveTrainSubsystem m_driveTrain;
     private PIDController PID;
 
-    private double leftJoyY, rightJoyX, error, gain;
+    private DoubleSupplier m_leftJoyY, m_rightJoyX;
+    private double error, gain;
 
-    public ArcadeDriveCommand(DriveTrainSubsystem driveTrainSubsystem, double currentLeftJoyY, double currentRightJoyX) {
-        this.m_driveTrain = driveTrainSubsystem;
+    /*
+    *  Add command to require the DriveTrainSubsystem and retrieve joystick values when needed using DoubleSuppliers.
+    */
+    public ArcadeDriveCommand(DriveTrainSubsystem driveTrainSubsystem, DoubleSupplier leftJoyY, DoubleSupplier rightJoyX) {
+        m_driveTrain = driveTrainSubsystem;
         addRequirements(m_driveTrain);
-        leftJoyY = currentLeftJoyY;
-        rightJoyX = currentRightJoyX;
+        m_leftJoyY = leftJoyY;
+        m_rightJoyX = rightJoyX;
     }
 
     /**
-     * The initial subroutine of a command.  Called once when the command is initially scheduled.
+     * Called once initially with the start of an ArcadeDrive command.
      */
     @Override
     public void initialize() {
+
+        // Create a new PID controller for driving straight.
         PID = new PIDController(Constants.DRIVE_STRAIGHT_P, Constants.DRIVE_STRAIGHT_I,
                 Constants.DRIVE_STRAIGHT_D);
+
+        // Set the target value to 0 where theoretically, both motor values are equal in power output.
         PID.setSetpoint(Constants.DRIVE_STRAIGHT_TARGET);
+
+        // Reset encoders to a reading of 0 for PID control.
         m_driveTrain.resetEncoders();
     }
 
-    /**
-     * The main body of a command.  Called repeatedly while the command is scheduled.
-     * (That is, it is called repeatedly until {@link #isFinished()}) returns true.)
-     */
+    /*
+    *  Call this method repeatedly to calculate motor input values.
+    */
     @Override
     public void execute() {
 
         // Calculate how much one side is spinning more than the other
         error = m_driveTrain.getLeftDistanceInches() - m_driveTrain.getRightDistanceInches();
 
-        // If it IS within the deadzone
-        if (leftJoyY > -Constants.JOYSTICK_DEADZONE && leftJoyY < Constants.JOYSTICK_DEADZONE) {
-            leftJoyY = 0;
-        }
-        if (rightJoyX > -Constants.JOYSTICK_DEADZONE && rightJoyX < Constants.JOYSTICK_DEADZONE) {
-            rightJoyX = 0;
+        /*
+        *  If X-axis joystick value is greater than joystick deadzone, use ArcadeDrive normally.
+        */
+        if (rightJoyXWithinDeadzone()) {
+            m_driveTrain.setLeftPower(parabolicDrive() - m_rightJoyX.getAsDouble());
+            m_driveTrain.setRightPower(parabolicDrive() + m_rightJoyX.getAsDouble());
         }
 
-        // If the right joystick (i.e: the turning axis) is not 0, then use Arcade drive
-        // normally.
-        // Otherwise, the robot should be going straight. Therefore, use
-        // DriveStraightPID to go straight.
-        // But if both joystick values are within the deadzones, they will both be 0.
-        // Apply no power in that case.
-        if (rightJoyX != 0) {
-            m_driveTrain.setLeftPower(parabolicDrive() - rightJoyX);
-            m_driveTrain.setRightPower(parabolicDrive() + rightJoyX);
-        }
-        // right joystick is in the deadzone, left joystick is not; apply PID to keep
-        // the robot going straight
-        else if (rightJoyX == 0 && leftJoyY != 0) {
-
+        /*
+         *  If X-axis joystick value is 0 (robot not turning) and Y-axis joystick value is greater than deadzone,
+         *  apply a PID controller to straighten robot drive.
+         */
+        else if (rightJoyXWithinDeadzone() && !leftJoyYWithinDeadzone()) {
             gain = PID.calculate(error);
-            // REMOVE ONCE PID IS TUNED
             gain = 0;
             m_driveTrain.setLeftPower(parabolicDrive() - gain);
             m_driveTrain.setRightPower(parabolicDrive() + gain);
         }
-        // both joystick values are within the deadzone
+
+        /*
+        *  Both joysticks are within deadzone, therefore robot not moving.
+        */
         else {
             m_driveTrain.setLeftPower(0.0);
             m_driveTrain.setRightPower(0.0);
         }
-
     }
 
+    /*
+    *  ArcadeDrive runs throughout the game, the robot always has the need to move. Therefore isFinished is never true.
+    */
     @Override
     public boolean isFinished() {
-        // TODO: Make this return true when this Command no longer needs to run execute()
         return false;
     }
 
+    /*
+    *  ArcadeDrive never ends.
+    */
     @Override
     public void end(boolean interrupted) {
-
     }
 
+    /*
+    *  Check is the Y-axis joystick value exists in the deadzone interval -0.05 <-> 0.05.
+    *  @RETURN true if within the deadzone, else false.
+    */
+    public boolean leftJoyYWithinDeadzone() {
+        return(m_leftJoyY.getAsDouble() > -Constants.JOYSTICK_DEADZONE
+                && m_leftJoyY.getAsDouble() < Constants.JOYSTICK_DEADZONE);
+    }
+
+    /*
+     *  Check is the X-axis joystick value exists in the deadzone interval -0.05 <-> 0.05.
+     *  @RETURN true if within the deadzone, else false.
+     */
+    public boolean rightJoyXWithinDeadzone() {
+        return(m_rightJoyX.getAsDouble() > -Constants.JOYSTICK_DEADZONE
+                && m_rightJoyX.getAsDouble() < Constants.JOYSTICK_DEADZONE);
+    }
+
+    /*
+     *  Squares Y-axis value to ensure a smooth, parabolic acceleration of the robot rather than linear.
+     *  @RETURN m_leftJoyY squared.
+    */
     public double parabolicDrive() {
-        if (leftJoyY > 0)
-            return Math.pow(leftJoyY, 2);
+        if (m_leftJoyY.getAsDouble() > 0)
+            return Math.pow(m_leftJoyY.getAsDouble(), 2);
         else
-            return -Math.pow(leftJoyY, 2);
+            return -Math.pow(m_leftJoyY.getAsDouble(), 2);
     }
-
 }
-
