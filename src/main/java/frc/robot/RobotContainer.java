@@ -10,11 +10,13 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
 import frc.robot.commands.ArcadeDriveCommand;
 import frc.robot.subsystems.DriveTrainSubsystem;
-import frc.robot.subsystems.PneumaticsSubsystem;
+import frc.robot.subsystems.ControlPanelManipulatorSubsystem;
 
 
 /**
@@ -27,7 +29,7 @@ public class RobotContainer {
 
   // Create instances of subsystems and controllers here.
   private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem();
-  private final PneumaticsSubsystem m_pneumatics = new PneumaticsSubsystem();
+  private final ControlPanelManipulatorSubsystem m_controlPanelManipulator = new ControlPanelManipulatorSubsystem();
   private final XboxController m_xboxController = new XboxController(Constants.XBOX_CONTROLLER_PORT);
 
 //  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
@@ -47,6 +49,8 @@ public class RobotContainer {
 
 
   private void configureButtonBindings() {
+    new JoystickButton(m_xboxController, Button.kBumperRight.value).whenPressed(m_controlPanelManipulator::flipSolenoid,
+            m_controlPanelManipulator);
 //    Define button with their respective command
 //    JoystickButton xButton = new JoystickButton(m_xboxController, 3);
 //    JoystickButton yButton = new JoystickButton(m_xboxController, 4);

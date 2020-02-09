@@ -7,6 +7,7 @@
 
 package frc.robot;
 
+import edu.wpi.first.wpilibj.util.Color;
 /**
  * The Constants class provides a convenient place for teams to hold robot-wide numerical or boolean
  * constants.  This class should not be used for any other purpose.  All constants should be
@@ -49,10 +50,16 @@ public final class Constants {
     public static final double JOYSTICK_DEADZONE = 0.05;
     public static final double TRIGGER_DEADZONE = 0.05;
 
-    // Pneumatics Values
+    // Control Panel Manipulator Values
     public static final int PCMID = 0;
-    public static final int intakeSolenoidChannel = 7;
+    public static final int CPM_SOLENOID = 7;
 
-    public static final int PNEUMATICS_MOTOR_PORT = 4;
+    public static final int CPM_MOTOR = 4;
+
+    // Control Panel Color Values
+    public static final Color BLUE_TARGET = new Color(0.143, 0.427, 0.429);
+    public static final Color GREEN_TARGET = new Color(0.197, 0.561, 0.240);
+    public static final Color RED_TARGET = new Color(0.561, 0.232, 0.114);
+    public static final Color YELLOW_TARGET = new Color(0.361, 0.524, 0.113);
 
 }

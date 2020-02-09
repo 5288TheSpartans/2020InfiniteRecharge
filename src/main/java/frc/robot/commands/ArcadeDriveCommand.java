@@ -11,7 +11,7 @@ public class ArcadeDriveCommand extends CommandBase {
     private PIDController PID;
 
     private DoubleSupplier m_leftJoyY, m_rightJoyX;
-    private double error, gain;
+    private double currentLeftJoyY, currentRightJoyX, error, gain;
 
     /*
     *  Add command to require the DriveTrainSubsystem and retrieve joystick values when needed using DoubleSuppliers.
@@ -46,6 +46,10 @@ public class ArcadeDriveCommand extends CommandBase {
     @Override
     public void execute() {
 
+        // Current values of X and Y-axis joysticks.
+        currentLeftJoyY = m_leftJoyY.getAsDouble();
+        currentRightJoyX = m_rightJoyX.getAsDouble();
+
         // Calculate how much one side is spinning more than the other
         error = m_driveTrain.getLeftDistanceInches() - m_driveTrain.getRightDistanceInches();
 
@@ -53,8 +57,8 @@ public class ArcadeDriveCommand extends CommandBase {
         *  If X-axis joystick value is greater than joystick deadzone, use ArcadeDrive normally.
         */
         if (rightJoyXWithinDeadzone()) {
-            m_driveTrain.setLeftPower(parabolicDrive() - m_rightJoyX.getAsDouble());
-            m_driveTrain.setRightPower(parabolicDrive() + m_rightJoyX.getAsDouble());
+            m_driveTrain.setLeftPower(parabolicDrive() - currentRightJoyX);
+            m_driveTrain.setRightPower(parabolicDrive() + currentRightJoyX);
         }
 
         /*
@@ -97,8 +101,8 @@ public class ArcadeDriveCommand extends CommandBase {
     *  @RETURN true if within the deadzone, else false.
     */
     public boolean leftJoyYWithinDeadzone() {
-        return(m_leftJoyY.getAsDouble() > -Constants.JOYSTICK_DEADZONE
-                && m_leftJoyY.getAsDouble() < Constants.JOYSTICK_DEADZONE);
+        return(currentLeftJoyY > -Constants.JOYSTICK_DEADZONE
+                && currentLeftJoyY < Constants.JOYSTICK_DEADZONE);
     }
 
     /*
@@ -106,8 +110,8 @@ public class ArcadeDriveCommand extends CommandBase {
      *  @RETURN true if within the deadzone, else false.
      */
     public boolean rightJoyXWithinDeadzone() {
-        return(m_rightJoyX.getAsDouble() > -Constants.JOYSTICK_DEADZONE
-                && m_rightJoyX.getAsDouble() < Constants.JOYSTICK_DEADZONE);
+        return(currentRightJoyX > -Constants.JOYSTICK_DEADZONE
+                && currentRightJoyX < Constants.JOYSTICK_DEADZONE);
     }
 
     /*
@@ -115,9 +119,9 @@ public class ArcadeDriveCommand extends CommandBase {
      *  @RETURN m_leftJoyY squared.
     */
     public double parabolicDrive() {
-        if (m_leftJoyY.getAsDouble() > 0)
-            return Math.pow(m_leftJoyY.getAsDouble(), 2);
+        if (currentLeftJoyY > 0)
+            return Math.pow(currentLeftJoyY, 2);
         else
-            return -Math.pow(m_leftJoyY.getAsDouble(), 2);
+            return -Math.pow(currentLeftJoyY, 2);
     }
 }

@@ -9,9 +9,7 @@ import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.Constants;
-import frc.robot.RobotContainer;
-import frc.robot.Robot;
-import frc.robot.commands.ArcadeDriveCommand;
+
 
 
 public class DriveTrainSubsystem extends SubsystemBase {
@@ -55,6 +53,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
 
     @Override
     public void periodic() {
+        System.out.println("Drivetrain periodic called");
         updateMotorOutputs();
     }
 
