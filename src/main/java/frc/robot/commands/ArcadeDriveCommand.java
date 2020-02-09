@@ -1,8 +1,8 @@
 package frc.robot.commands;
 
+import java.util.function.DoubleSupplier;
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import java.util.function.DoubleSupplier;
 import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.Constants;
 
@@ -10,12 +10,16 @@ public class ArcadeDriveCommand extends CommandBase {
     private final DriveTrainSubsystem m_driveTrain;
     private PIDController PID;
 
+
     private DoubleSupplier m_leftJoyY, m_rightJoyX;
     private double currentLeftJoyY, currentRightJoyX, error, gain;
 
-    /*
-    *  Add command to require the DriveTrainSubsystem and retrieve joystick values when needed using DoubleSuppliers.
-    */
+    /**
+     * CONSTRUCTOR
+     * @param driveTrainSubsystem Instance of a DriveTrainSubsystem.
+     * @param leftJoyY DoubleSupplier containing a method to retrieve the leftJoyY value.
+     * @param rightJoyX DoubleSupplier containing a method to retrieve the rightJoyX value.
+     */
     public ArcadeDriveCommand(DriveTrainSubsystem driveTrainSubsystem, DoubleSupplier leftJoyY, DoubleSupplier rightJoyX) {
         m_driveTrain = driveTrainSubsystem;
         addRequirements(m_driveTrain);
@@ -40,7 +44,7 @@ public class ArcadeDriveCommand extends CommandBase {
         m_driveTrain.resetEncoders();
     }
 
-    /*
+    /**
     *  Call this method repeatedly to calculate motor input values.
     */
     @Override
@@ -54,16 +58,16 @@ public class ArcadeDriveCommand extends CommandBase {
         error = m_driveTrain.getLeftDistanceInches() - m_driveTrain.getRightDistanceInches();
 
         /*
-        *  If X-axis joystick value is greater than joystick deadzone, use ArcadeDrive normally.
+          If X-axis joystick value is greater than joystick deadzone, use ArcadeDrive normally.
         */
         if (rightJoyXWithinDeadzone()) {
             m_driveTrain.setLeftPower(parabolicDrive() - currentRightJoyX);
             m_driveTrain.setRightPower(parabolicDrive() + currentRightJoyX);
         }
 
-        /*
-         *  If X-axis joystick value is 0 (robot not turning) and Y-axis joystick value is greater than deadzone,
-         *  apply a PID controller to straighten robot drive.
+         /*
+           If X-axis joystick value is 0 (robot not turning) and Y-axis joystick value is greater than deadzone,
+           apply a PID controller to straighten robot drive.
          */
         else if (rightJoyXWithinDeadzone() && !leftJoyYWithinDeadzone()) {
             gain = PID.calculate(error);
@@ -73,7 +77,7 @@ public class ArcadeDriveCommand extends CommandBase {
         }
 
         /*
-        *  Both joysticks are within deadzone, therefore robot not moving.
+          Both joysticks are within deadzone, therefore robot not moving.
         */
         else {
             m_driveTrain.setLeftPower(0.0);
@@ -81,42 +85,43 @@ public class ArcadeDriveCommand extends CommandBase {
         }
     }
 
-    /*
-    *  ArcadeDrive runs throughout the game, the robot always has the need to move. Therefore isFinished is never true.
-    */
+    /**
+     * ArcadeDrive runs throughout the game, the robot always has the need to move. Therefore isFinished is never true.
+     * @return False if the command is not finished, else true if it is.
+     */
     @Override
     public boolean isFinished() {
         return false;
     }
 
-    /*
-    *  ArcadeDrive never ends.
+    /**
+    *  ArcadeDrive never ends except when it is manually cancelled.
     */
     @Override
     public void end(boolean interrupted) {
     }
 
-    /*
+    /**
     *  Check is the Y-axis joystick value exists in the deadzone interval -0.05 <-> 0.05.
-    *  @RETURN true if within the deadzone, else false.
+    *  @return true if within the deadzone, else false.
     */
     public boolean leftJoyYWithinDeadzone() {
         return(currentLeftJoyY > -Constants.JOYSTICK_DEADZONE
                 && currentLeftJoyY < Constants.JOYSTICK_DEADZONE);
     }
 
-    /*
+    /**
      *  Check is the X-axis joystick value exists in the deadzone interval -0.05 <-> 0.05.
-     *  @RETURN true if within the deadzone, else false.
+     *  @return true if within the deadzone, else false.
      */
     public boolean rightJoyXWithinDeadzone() {
         return(currentRightJoyX > -Constants.JOYSTICK_DEADZONE
                 && currentRightJoyX < Constants.JOYSTICK_DEADZONE);
     }
 
-    /*
+    /**
      *  Squares Y-axis value to ensure a smooth, parabolic acceleration of the robot rather than linear.
-     *  @RETURN m_leftJoyY squared.
+     *  @return m_leftJoyY squared.
     */
     public double parabolicDrive() {
         if (currentLeftJoyY > 0)

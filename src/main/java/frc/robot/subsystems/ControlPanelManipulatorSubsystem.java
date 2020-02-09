@@ -12,6 +12,7 @@ import frc.robot.Constants;
 
 public class ControlPanelManipulatorSubsystem extends SubsystemBase {
 
+    // Define variables used in the subsystems.
     private final I2C.Port i2cPort = I2C.Port.kOnboard;
     private Compressor m_primaryCompressor;
     private Solenoid m_controlPanelSolenoid;
@@ -20,6 +21,9 @@ public class ControlPanelManipulatorSubsystem extends SubsystemBase {
 
     private boolean currentlyExtended = false;
 
+    /**
+     * CONSTRUCTOR
+     */
     public ControlPanelManipulatorSubsystem() {
         System.out.println("PneumaticsSubsystem CONSTRUCTOR initialized!");
 
@@ -31,16 +35,34 @@ public class ControlPanelManipulatorSubsystem extends SubsystemBase {
         m_colourSensor = new ColorSensorV3(i2cPort);
     }
 
+    /**
+     * Flips the control panel manipulator's position and sets a boolean value for whether it is currently extended.
+     */
     public void flipSolenoid() {
         System.out.println("Solenoid activated");
         currentlyExtended = !currentlyExtended;
         m_controlPanelSolenoid.set(currentlyExtended);
     }
 
+    /**
+     * Get the current colour detected by the colourSensor.
+     * @return Detected colour.
+     */
     public Color getColour() {
-        return(m_colourSensor.getColor());
+        return m_colourSensor.getColor();
     }
-    public boolean getIsExtended() {
-        return currentlyExtended;
+
+    /**
+     * Set control panel motor speed;
+     * @param power Value between 1 and -1. Negative values represent backwards motion.
+     */
+    public void setPower(double power) {
+        m_controlPanelMotor.set(power);
     }
+
+    /**
+     * Gets whether the control panel manipulator is extended or not.
+     * @return True or false.
+     */
+    public boolean getIsExtended() { return currentlyExtended; }
 }

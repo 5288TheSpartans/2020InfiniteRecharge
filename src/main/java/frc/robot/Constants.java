@@ -62,4 +62,10 @@ public final class Constants {
     public static final Color RED_TARGET = new Color(0.561, 0.232, 0.114);
     public static final Color YELLOW_TARGET = new Color(0.361, 0.524, 0.113);
 
+    // TODO: Test the optimal spinning speed.
+    public static final double ROTATION_CONTROL_POWER = 0.4;
+    public static final double POSITION_CONTROL_POWER = 0.3;
+    public static final double ROTATION_GOAL = 4.0;
+
+
 }

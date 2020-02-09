@@ -1,21 +1,20 @@
 package frc.robot.subsystems;
 
-
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import edu.wpi.first.wpilibj.ADXRS450_Gyro;
 import edu.wpi.first.wpilibj.CounterBase.EncodingType;
 import edu.wpi.first.wpilibj.Encoder;
 import edu.wpi.first.wpilibj.VictorSP;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import com.kauailabs.navx.frc.AHRS;
+import com.revrobotics.CANSparkMax;
 import frc.robot.Constants;
 
-
+/**
+ * TODO: Implement NAVX (AHRS) gyro.
+ * TODO: SPARKMAX motor controller drive.
+ */
 
 public class DriveTrainSubsystem extends SubsystemBase {
-
-// Any variables/fields used in the constructor must appear before the "INSTANCE" variable
-// so that they are initialized before the constructor is called.
 
     //Initialize useful constants and variables
     private double leftPower, rightPower;
@@ -27,15 +26,15 @@ public class DriveTrainSubsystem extends SubsystemBase {
     private VictorSP rightMotor1 = new VictorSP(Constants.RIGHT_MOTOR_1);
     private VictorSP rightMotor2 = new VictorSP(Constants.RIGHT_MOTOR_2);
 
-    // Create Gyro
-//    private ADXRS450_Gyro gyro = new ADXRS450_Gyro();
-
     // Create Encoders
     private Encoder leftEncoder = new Encoder(Constants.LEFT_ENCODER_1,Constants.LEFT_ENCODER_2, false,
             EncodingType.k4X);
     private Encoder rightEncoder = new Encoder(Constants.RIGHT_ENCODER_1,Constants.RIGHT_ENCODER_2, true,
             EncodingType.k4X);
 
+    /**
+     * CONSTRUCTOR
+     */
     public DriveTrainSubsystem() {
         System.out.println("DriveTrainSubsystem CONSTRUCTOR initialized!");
 
@@ -48,7 +47,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightEncoder.setMinRate(0);
         leftEncoder.setSamplesToAverage(1);
         rightEncoder.setSamplesToAverage(1);
-//        gyro.calibrate();
     }
 
     @Override
@@ -58,7 +56,7 @@ public class DriveTrainSubsystem extends SubsystemBase {
     }
 
     /**
-     * SET the power of the LEFT and RIGHT motors.
+     * Set the power of the LEFT and RIGHT motors.
      * @param power Value between 1 and -1. Negative values represent backwards motion.
      */
     public void setLeftPower(double power){
@@ -69,7 +67,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightPower = power;
     }
 
+    /**
+     * Invert motor powers to make the left motors spin in the same direction as the right.
+     */
     public void invertMotors() { leftMotor1.setInverted(true); leftMotor2.setInverted(true); }
+
     /**
      * Called by the CommandScheduler to update each motors power value periodically.
      */
@@ -91,6 +93,10 @@ public class DriveTrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Right Encoder Dist Per Pulse", rightEncoder.getDistancePerPulse());
     }
 
+    /**
+     * Get the distance travelled by each side of the robot encoders.
+     * @return left/right encoder distance in inches.
+     */
     public double getLeftDistanceInches() {
         return leftEncoder.getDistance();
     }
@@ -99,17 +105,11 @@ public class DriveTrainSubsystem extends SubsystemBase {
         return rightEncoder.getDistance();
     }
 
-//    public double getGyroAngle() {
-//        return gyro.getAngle();
-//    }
-
-//    public void resetGyro() {
-//        gyro.reset();
-//    }
-
+    /**
+     * Reset encoder position to 0.
+     */
     public void resetEncoders() {
         leftEncoder.reset();
         rightEncoder.reset();
     }
 }
-
