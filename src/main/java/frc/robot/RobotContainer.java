@@ -1,10 +1,3 @@
-/*----------------------------------------------------------------------------*/
-/* Copyright (c) 2018-2019 FIRST. All Rights Reserved.                        */
-/* Open Source Software - may be modified and shared by FRC teams. The code   */
-/* must be accompanied by the FIRST BSD license file in the root directory of */
-/* the project.                                                               */
-/*----------------------------------------------------------------------------*/
-
 package frc.robot;
 
 
@@ -19,18 +12,12 @@ import frc.robot.subsystems.DriveTrainSubsystem;
 import frc.robot.subsystems.ControlPanelManipulatorSubsystem;
 
 
-/**
- * This class is where the bulk of the robot should be declared.  Since Command-based is a
- * "declarative" paradigm, very little robot logic should actually be handled in the {@link Robot}
- * periodic methods (other than the scheduler calls).  Instead, the structure of the robot
- * (including subsystems, commands, and button mappings) should be declared here.
- */
 public class RobotContainer {
 
   // Create instances of subsystems and controllers here.
-  private final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem();
-  private final ControlPanelManipulatorSubsystem m_controlPanelManipulator = new ControlPanelManipulatorSubsystem();
-  private final XboxController m_xboxController = new XboxController(Constants.XBOX_CONTROLLER_PORT);
+  public final DriveTrainSubsystem m_driveTrain = new DriveTrainSubsystem();
+  public static final ControlPanelManipulatorSubsystem m_controlPanelManipulator = new ControlPanelManipulatorSubsystem();
+  public static final XboxController m_xboxController = new XboxController(Constants.XBOX_CONTROLLER_PORT);
 
 //  private final ExampleCommand m_autoCommand = new ExampleCommand(m_exampleSubsystem);
 
@@ -43,12 +30,12 @@ public class RobotContainer {
 
     // Configure the button bindings
     configureButtonBindings();
-    m_driveTrain.setDefaultCommand(new ArcadeDriveCommand(m_driveTrain, () -> m_xboxController.getY(GenericHID.Hand.kLeft),
-            () -> m_xboxController.getX(GenericHID.Hand.kRight)));
   }
 
 
   private void configureButtonBindings() {
+    m_driveTrain.setDefaultCommand(new ArcadeDriveCommand(m_driveTrain, () -> m_xboxController.getY(GenericHID.Hand.kLeft),
+            () -> m_xboxController.getX(GenericHID.Hand.kRight)));
     new JoystickButton(m_xboxController, Button.kBumperRight.value).whenPressed(m_controlPanelManipulator::flipSolenoid,
             m_controlPanelManipulator);
 //    Define button with their respective command

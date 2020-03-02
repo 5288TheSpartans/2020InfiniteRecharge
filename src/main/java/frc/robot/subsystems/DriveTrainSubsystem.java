@@ -49,12 +49,6 @@ public class DriveTrainSubsystem extends SubsystemBase {
         rightEncoder.setSamplesToAverage(1);
     }
 
-    @Override
-    public void periodic() {
-        System.out.println("Drivetrain periodic called");
-        updateMotorOutputs();
-    }
-
     /**
      * Set the power of the LEFT and RIGHT motors.
      * @param power Value between 1 and -1. Negative values represent backwards motion.
