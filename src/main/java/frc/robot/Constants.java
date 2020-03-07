@@ -22,6 +22,16 @@ public final class Constants {
     // Wheel Circumference and Encoder Ticks
     public static final int numberOfTicks = 2048;
     public static final double wheelCircumference = (Math.PI * 6);
+    public static final double gearRatio = 0;
+    public static final double wheelRadius = 0;
+
+    // (SparkMAX) Motor Port Values
+    public static final int LEFT_MASTER_MOTOR = 1;
+    public static final int LEFT_SLAVE_MOTOR = 2;
+
+    public static final int RIGHT_MASTER_MOTOR = 3;
+    public static final int RIGHT_SLAVE_MOTOR = 4;
+
 
     // (VictorSP) Motor Port Values
     public static final int LEFT_MOTOR_1 = 7;
