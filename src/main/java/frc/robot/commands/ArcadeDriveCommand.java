@@ -70,8 +70,8 @@ public class ArcadeDriveCommand extends CommandBase {
           If X-axis joystick value is greater than joystick deadzone, use ArcadeDrive normally.
         */
         if (!rightJoyXWithinDeadzone()) {
-            m_driveTrain.setLeftPower(parabolicDrive() - currentRightJoyX);
-            m_driveTrain.setRightPower(parabolicDrive() + currentRightJoyX);
+            m_driveTrain.setLeftPower(linearDrive() - currentRightJoyX);
+            m_driveTrain.setRightPower(linearDrive() + currentRightJoyX);
         }
 
          /*
@@ -81,8 +81,8 @@ public class ArcadeDriveCommand extends CommandBase {
         else if (rightJoyXWithinDeadzone() && !leftJoyYWithinDeadzone()) {
             gain = PID.calculate(error);
             gain = 0;
-            m_driveTrain.setLeftPower(parabolicDrive() - gain);
-            m_driveTrain.setRightPower(parabolicDrive() + gain);
+            m_driveTrain.setLeftPower(linearDrive() - gain);
+            m_driveTrain.setRightPower(linearDrive() + gain);
         }
 
         /*
@@ -129,13 +129,15 @@ public class ArcadeDriveCommand extends CommandBase {
     }
 
     /**
-     *  Squares Y-axis value to ensure a smooth, parabolic acceleration of the robot rather than linear.
-     *  @return m_leftJoyY squared.
+     *  Squares Y-axis value to ensure a smooth, linear acceleration of the robot.
+     *  @return m_leftJoyY translated to compensate for deadzone.
     */
-    public double parabolicDrive() {
-        if (currentLeftJoyY > 0)
-            return Math.pow(currentLeftJoyY, 2);
-        else
-            return -Math.pow(currentLeftJoyY, 2);
+    public double linearDrive() {
+        if (currentLeftJoyY > 0) {
+            return (currentLeftJoyY-0.15)*1.15;
+        }
+        else {
+            return (currentLeftJoyY+0.15)*1.15;
+        }
     }
 }
