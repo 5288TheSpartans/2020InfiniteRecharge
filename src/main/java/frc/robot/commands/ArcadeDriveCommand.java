@@ -57,10 +57,19 @@ public class ArcadeDriveCommand extends CommandBase {
         // Calculate how much one side is spinning more than the other
         error = m_driveTrain.getLeftDistanceInches() - m_driveTrain.getRightDistanceInches();
 
+
+        if(leftJoyYWithinDeadzone()) {
+            currentLeftJoyY = 0;
+        }
+
+        if(rightJoyXWithinDeadzone()) {
+            currentRightJoyX = 0;
+        }
+
         /*
           If X-axis joystick value is greater than joystick deadzone, use ArcadeDrive normally.
         */
-        if (rightJoyXWithinDeadzone()) {
+        if (!rightJoyXWithinDeadzone()) {
             m_driveTrain.setLeftPower(parabolicDrive() - currentRightJoyX);
             m_driveTrain.setRightPower(parabolicDrive() + currentRightJoyX);
         }
